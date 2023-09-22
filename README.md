@@ -81,7 +81,7 @@ A convenience function for this common use case is provided:
 # y: [N, 1] array of predicted classes 
 conf, acc = relplot.multiclass_logits_to_confidences(f, y) # reduce to binary setting
 relplot.rel_diagram(f=conf, y=acc) # plot confidence calibration diagram
-relplot.smECE(f=conf, y=acc) # compute smECE of conficence calibration
+relplot.smECE(f=conf, y=acc) # compute smECE of confidence calibration
 ```
 
 ### Customization
