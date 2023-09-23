@@ -14,7 +14,7 @@ The reliability diagram is obtained by kernel smoothing with a careful choice of
 The SmoothECE is roughly equal to the standard ECE of the smoothed reliability diagram.
 The reliability diagram for a toy dataset of 8 points is shown below;
 more theoretical details are available in the accompanying preprint
-*Smooth ECE: Principled Reliability Diagrams via Kernel Smoothing.*
+[Smooth ECE: Principled Reliability Diagrams via Kernel Smoothing](https://arxiv.org/abs/2309.12236).
 
 ![](imgs/smoothing.png)
 
@@ -47,7 +47,7 @@ y = (np.random.rand(N) > 1-(f + 0.2*np.sin(2*np.pi*f)))*1
 
 ## compute calibration error (smECE) and plot
 print('calibration error:', rp.smECE(f, y))
-fig = rp.rel_diagram(f, y)
+fig, ax = rp.rel_diagram(f, y)
 fig.show()
 ```
 This is reproduced in [notebooks/demo.ipynb](notebooks/demo.ipynb).
@@ -112,5 +112,8 @@ If you use relplot in your work, please consider citing:
       title={Smooth ECE: Principled Reliability Diagrams via Kernel Smoothing},
       author={Jarosław Błasiok and Preetum Nakkiran},
       year={2023},
+      eprint={2309.12236},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
 }
 ```
