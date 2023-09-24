@@ -84,9 +84,12 @@ relplot.rel_diagram(f=conf, y=acc) # plot confidence calibration diagram
 relplot.smECE(f=conf, y=acc) # compute smECE of confidence calibration
 ```
 
-### Customization
+### Customization and Usage Tips
 The plot made by `relplot.rel_diagram` can be customized in various ways, as shown below.
 See this notebook for examples of more options: [notebooks/figure1.ipynb](./notebooks/figure1.ipynb)
+
+* For small datasets, you may want to disable bootstrapping (which subsamples the data). Pass the parameter `plot_confidence_band=False`.
+* To override the automatic choice of kernel bandwidth for the diagram, set the parameter `kde_bandwidth`.
 
 ![](imgs/simple_plot.png)
 
