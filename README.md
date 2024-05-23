@@ -2,21 +2,44 @@
 
 `relplot` is a Python package for plotting reliability diagrams and measuring calibration error,
 in a theoretically-principled way.
-The package generates reliability diagrams as shown on the right
-(reproduced in [notebooks/figure1.ipynb](./notebooks/figure1.ipynb)):
+The package generates reliability diagrams as shown on the right:
 ![](imgs/hero.png)
 
-The density of predictions $f_i \in [0, 1]$ is visualized as the
-thickness of the red regression line, and the gray band shows
-bootstrapped confidence bands around the regression.
+***How to Read the Diagram***
 
-The reliability diagram is obtained by kernel smoothing with a careful choice of parameters, and the associated calibration measure is called the *SmoothECE* (abbreviated smECE).
-The SmoothECE is roughly equal to the standard ECE of the smoothed reliability diagram.
-The reliability diagram for a toy dataset of 8 points is shown below;
-more theoretical details are available in the accompanying preprint
-[Smooth ECE: Principled Reliability Diagrams via Kernel Smoothing](https://arxiv.org/abs/2309.12236).
+* The input data is a set of observations:
+pairs of predicted probability and true outcomes $(f_i, y_i) \in [0, 1] \times \{0, 1\}$.
+For example, $f_i$ may be the forecasted "chance of rain" on day $i$, and
+$y_i$ the indicator of whether it rained or not on day $i$.
 
-![](imgs/smoothing.png)
+* The x-axis shows the predicted probabilities,
+and the y-axis shows an estimate of the true probability,
+conditioned on the predicted probability. Formally, this is a regression
+of outcomes $y$ on predictions $f$.
+
+* The tick marks show the raw data:
+namely, the predicted probabilities for up to 100 datapoints,
+plotted above or below the x-axis according to whether the true outcome was 1 or 0.
+The thickness of the red regression curve represents the smoothed density of these tick marks, while the height of the curve represents the smoothed fraction whose true outcome is 1.
+
+* The SmoothECE (smECE) is a measure of mis-calibration:
+it is essentially the average absolute difference
+between the red regression curve
+and the diagonal, averaged over x-coordinates
+that are distributed as the tick marks are
+(i.e. integrated over the density of predictions).
+See the [paper](https://arxiv.org/abs/2309.12236) for
+full details of the estimator and its properties.
+
+* The smECE is reported with $\pm$ denoting 95% confidence intervals, estimated
+via bootstrapping. The gray band similarly shows 95% bootstrapped confidence bands around the regression line.
+
+Formally, the reliability diagram is obtained by kernel smoothing with a careful choice of parameters. The choice of smoothing bandwidth (akin to "bin width")
+is cruicial, but is done *automatically* by the code in a theorhetically-justified way.
+
+This package is based on the theoretical results in
+the paper
+[Smooth ECE: Principled Reliability Diagrams via Kernel Smoothing](https://arxiv.org/abs/2309.12236) (ICLR 2024).
 
 
 ## Installation
@@ -34,23 +57,16 @@ Or, clone the repo and install with:
 
 ## Getting Started 
 
-Basic usage (on sample data):
+Basic usage:
 
 ```python
-import relplot as rp
-import numpy as np
+# f: array of probabilities [f_i]
+# y: array of binary labels [y_i]
 
-## generate toy data (miscalibrated)
-N = 5000
-f = np.random.rand(N)
-y = (np.random.rand(N) > 1-(f + 0.2*np.sin(2*np.pi*f)))*1
-
-## compute calibration error (smECE) and plot
-print('calibration error:', rp.smECE(f, y))
-fig, ax = rp.rel_diagram(f, y)
-fig.show()
+calib_error = rp.smECE(f, y)   # compute calibration error (scalar)
+fig, ax = rp.rel_diagram(f, y) # plot
 ```
-This is reproduced in [notebooks/demo.ipynb](notebooks/demo.ipynb).
+See a quick demo in [notebooks/demo.ipynb](notebooks/demo.ipynb).
 
 For more control, one can compute the calibration data with `relplot.prepare_rel_diagram`, and then plot it later with `relplot.plot_rel_diagram`.
 For example:
@@ -61,6 +77,9 @@ print('calibration error:', diagram['ce'])
 plt.plot(diagram['mesh'], diagram['mu']) # plot the calibration curve manually
 fig, ax = rp.plot_rel_diagram(diagram) # plot the diagram in a new figure
 ```
+The smoothed regression function itself is returned as `diagram['mu']`,
+which specifies values on the grid of x-coordinates in `diagram['mesh']`.
+This can be used for manual re-calibration.
 
 
 ### Data Format
@@ -111,12 +130,14 @@ If you use relplot in your work, please consider citing:
 
 
 ```bibtex
-@misc{relplot2023,
-      title={Smooth ECE: Principled Reliability Diagrams via Kernel Smoothing},
-      author={Jarosław Błasiok and Preetum Nakkiran},
-      year={2023},
-      eprint={2309.12236},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
+@inproceedings{blasiok2024smooth,
+      title={Smooth {ECE}: Principled Reliability Diagrams via Kernel Smoothing},
+      author={B{\l}asiok, Jaros{\l}aw and Nakkiran, Preetum},
+      booktitle={The Twelfth International Conference on Learning Representations},
+      year={2024},
+      url={https://openreview.net/forum?id=XwiA1nDahv}
 }
 ```
+
+### Acknowledgements
+We thank Jason Eisner for helpful suggestions on the package and documentation.
