@@ -60,6 +60,9 @@ Or, clone the repo and install with:
 Basic usage:
 
 ```python
+import relplot as rp
+
+# ...
 # f: array of probabilities [f_i]
 # y: array of binary labels [y_i]
 
