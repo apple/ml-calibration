@@ -6,7 +6,7 @@
 import numpy as np
 import sklearn
 from sklearn.base import BaseEstimator
-from sklearn.utils._estimator_html_repr import _VisualBlock
+from sklearn.utils._repr_html.estimator import _VisualBlock
 
 
 class KernelSmoother(BaseEstimator):
