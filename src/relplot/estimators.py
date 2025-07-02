@@ -6,7 +6,6 @@
 import numpy as np
 import sklearn
 from sklearn.base import BaseEstimator
-from sklearn.utils._repr_html.estimator import _VisualBlock
 
 
 class KernelSmoother(BaseEstimator):
@@ -115,20 +114,22 @@ class RecalibratedEstimator(BaseEstimator):
         pred = pred.reshape((len(pred), 1))
         return self.recalibration_regressor_.predict(pred)
 
-    def _sk_visual_block_(self):
-        estimation_block = _VisualBlock(
-            "parallel", [self.estimator], names=["estimator"], dash_wrapped=False
-        )
-        recalibration_block = _VisualBlock(
-            "parallel",
-            [self.recalibration_regressor],
-            names=[
-                f"recalibration_regressor: {self.recalibration_regressor.__class__.__name__}"
-            ],
-            dash_wrapped=False,
-        )
-        return _VisualBlock(
-            "serial", [estimation_block, recalibration_block], dash_wrapped=False
-        )
+    ## Commented out to avoid sklearn version incompatibility
+    # def _sk_visual_block_(self):
+    #     from sklearn.utils._repr_html.estimator import _VisualBlock
+    #     estimation_block = _VisualBlock(
+    #         "parallel", [self.estimator], names=["estimator"], dash_wrapped=False
+    #     )
+    #     recalibration_block = _VisualBlock(
+    #         "parallel",
+    #         [self.recalibration_regressor],
+    #         names=[
+    #             f"recalibration_regressor: {self.recalibration_regressor.__class__.__name__}"
+    #         ],
+    #         dash_wrapped=False,
+    #     )
+    #     return _VisualBlock(
+    #         "serial", [estimation_block, recalibration_block], dash_wrapped=False
+    #     )
 
     predict_proba = predict
