@@ -40,12 +40,6 @@ def intCE_rand(f, y, eps=0.001, trials=100):
         bin_size = bin_size / (2)
     return min_error
 
-# def smooth_ece_interpolated(r_grid, sigma):
-#     kernel = _get_default_kernel()
-#     ker = kernel(sigma)
-#     rs = ker.convolve(r_grid, len(r_grid))
-#     return np.sum(np.abs(rs)) / len(r_grid)
-
 def smooth_ece(f, y, bin_size):
     ev_points = config.smECE_mesh_pts
     kernel = _get_default_kernel()
@@ -67,10 +61,17 @@ def search_param(predicate, start=1, refine=10):
             start = midpoint
     return start
 
+def smECE_sigma(f, y, sigma=0.05):
+    """
+        Computes SmoothECE at a fixed bandwidth sigma.
+    """
+    return smooth_ece(f, y, sigma)
 
-def smECE_slow(f, y, eps=0.001, return_width=False):
-    ## Computes the smECE (legacy naming).
-    ## Note, smooth_ece uses discretization of the kernel for large datasets.
+def smECE(f, y, eps=0.001, return_width=False):
+    """
+        Computes SmoothECE with automatic choice of bandwidth sigma, as described in [Błasiok-Nakkiran '23].
+        Note, the implementation discretizes the kernel for large datasets.
+    """
     def check_smooth_ece(alpha):
         return alpha < eps or alpha < smooth_ece(f, y, alpha)
 
@@ -80,32 +81,6 @@ def smECE_slow(f, y, eps=0.001, return_width=False):
     else:
         return smooth_ece(f, y, bin_size)
 
-# def smECE_fast(f, y, eps=0.001, return_width = False):
-#     ## This version of smECE discretizes the dataset at the appropriate resolution.
-#     num_eval_points = config.smECE_mesh_pts
-#     r_values = smooth_round_to_grid(f, f - y, eval_points=num_eval_points) / len(f)
-
-#     def recalculate_if_necessary(alpha):
-#         nonlocal num_eval_points
-#         nonlocal r_values
-#         recalc = False
-#         while round(20/alpha) > num_eval_points:
-#             recalc = True
-#             num_eval_points *= 4
-#         if recalc:
-#             r_values = smooth_round_to_grid(f, f-y, eval_points = num_eval_points) / len(f)
-
-#     def check_smooth_ece(alpha):
-#         recalculate_if_necessary(alpha)
-#         return alpha < eps or alpha < smooth_ece_interpolated(r_values, alpha)
-
-#     sigma = search_param(check_smooth_ece, start=1, refine=10)
-#     if return_width:
-#         return smooth_ece_interpolated(r_values, sigma), sigma
-#     else:
-#         return smooth_ece_interpolated(r_values, sigma)
-
-smECE = smECE_slow
 smECE_fast = smECE # for backwards compatability
 
 def binnedECE(f, y, nbins=10):

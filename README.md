@@ -84,6 +84,13 @@ The smoothed regression function itself is returned as `diagram['mu']`,
 which specifies values on the grid of x-coordinates in `diagram['mesh']`.
 This can be used for manual re-calibration.
 
+### Manual Bandwidth
+To measure SmoothECE with a manual choice of bandwidth
+(rather than automatic choice), use:  
+```python
+calib_error = relplot.smECE_sigma(f, y, sigma=0.05)
+```
+Using a manual bandwidth can sometimes be desirable for interpretability: `smECE_sigma` behaves similarly to binnedECE with `bin_width=sigma`, at the cost of slightly weaker theoretical guarantees.
 
 ### Data Format
 Methods expect inputs in the form
@@ -94,7 +101,7 @@ distribution $(f_i, y_i)$ of prediction-outcome pairs.
 This package primarily considers the binary outcome setting, but can be used
 to measure multi-class confidence calibration as shown below.
 
-### Multi-class Calibration
+### Multi-class Confidence Calibration
 In the multi-class setting, *confidence calibration* can be measured by expressing it as the binary
 calibration of the distribution on (confidence, accuracy) pairs.
 A convenience function for this common use case is provided:
@@ -109,6 +116,7 @@ relplot.smECE(f=conf, y=acc) # compute smECE of confidence calibration
 ### Customization and Usage Tips
 The plot made by `relplot.rel_diagram` can be customized in various ways, as shown below.
 See this notebook for examples of more options: [notebooks/figure1.ipynb](./notebooks/figure1.ipynb)
+
 
 * For small datasets, you may want to disable bootstrapping (which subsamples the data). Pass the parameter `plot_confidence_band=False`.
 * To override the automatic choice of kernel bandwidth for the diagram, set the parameter `kde_bandwidth`.
@@ -143,4 +151,4 @@ If you use relplot in your work, please consider citing:
 ```
 
 ### Acknowledgements
-We thank Jason Eisner for helpful suggestions on the package and documentation.
+We thank Jason Eisner and Adam Goliński for helpful suggestions on the package and documentation.
