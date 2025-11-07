@@ -108,7 +108,7 @@ class GaussianKernel(BaseKernelMixin):
 
     def convolve(self, values, eval_points):
         ker = self.kernel_ev(eval_points)
-        return np.convolve(values, ker, 'same')
+        return sp.signal.convolve(values, ker, 'same')
 
     def apply(self, f, y, x_eval, eval_points = None):
         if eval_points is None:
@@ -128,7 +128,7 @@ class ReflectedGaussianKernel(GaussianKernel):
     def convolve(self, values, eval_points):
         ker = self.kernel_ev(eval_points)
         ext_vals = np.concatenate([np.flip(values)[:-1], values, np.flip(values)[1:]])
-        return np.convolve(ext_vals, ker, "valid")[eval_points//2 : eval_points//2 + eval_points]
+        return sp.signal.convolve(ext_vals, ker, "valid")[eval_points//2 : eval_points//2 + eval_points]
 
 class TruncatedGaussianKernel(BaseKernelMixin):
     def __init__(self, sigma):
@@ -143,7 +143,7 @@ class TruncatedGaussianKernel(BaseKernelMixin):
 
     def convolve(self, values, eval_points):
         ker = self.kernel_ev(eval_points)
-        return np.convolve(values, ker, 'same')
+        return sp.signal.convolve(values, ker, 'same')
 
     def apply(self, f, y, x_eval, eval_points = None):
         if eval_points is None:
